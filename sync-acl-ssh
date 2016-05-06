@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# Author: Eugene Lee
+# 	  on behalf of Hack Manhattan
+# Last updated on 2016 May 06
+#
+
+if [ $# -ne 2 ]; then
+    echo "Usage: `basename $0` ACL-HOSTS ACL-LIST"
+    exit $E_BADARGS
+fi
+
+while read -a uhp; do
+    u="${uhp[0]}"
+    h="${uhp[1]}"
+    p="${uhp[2]}"
+
+    ssh "$u@$h" -p "$p" \
+	'if [ -e /etc/config/dropbear ]; then
+             cat > /etc/dropbear/authorized_keys;
+         fi; cat > ~/.ssh/authorized_keys' \
+	< "${2}"
+
+done < "${1}"
